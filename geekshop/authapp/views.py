@@ -13,12 +13,12 @@ from authapp.models import User
 from baskets.models import Basket
 from mainapp.mixin import BaseClassContextMixin, UserDispatchMixin
 
-class LoginListView(LoginView,BaseClassContextMixin):
+class LoginListView(LoginView, BaseClassContextMixin):
     template_name = 'authapp/login.html'
     form_class = UserLoginForm
     title = 'GeekShop - Авторизация'
 
-class RegisterListView(FormView,BaseClassContextMixin):
+class RegisterListView(FormView, BaseClassContextMixin):
     model = User
     template_name = 'authapp/register.html'
     form_class = UserRegisterForm
@@ -43,11 +43,12 @@ class RegisterListView(FormView,BaseClassContextMixin):
     @staticmethod
     def send_verify_link(user):
         verify_link = reverse('authapp:verify',args=[user.email,user.activation_key])
-        subject = f'Для активации учетной записи {user.username} пройдите по ссылке'
-        message = f'Для подтверждения учетной записи {user.username} на портале \n {settings.DOMAIN_NAME}{verify_link}'
+        subject = f'Завершение регистрации: {user.username}, остался последний шаг'
+        message = f'Здравствуйте, {user.username}.\nЧтобы завершить регистрацию на портале {settings.DOMAIN_NAME}, перейдите по этой ссылке: {settings.DOMAIN_NAME}{verify_link}.\n\nЕсли ссылка неактивна, выделите её, скопируйте и вставьте в адресной строке Вашего браузера.'
         return send_mail(subject,message,settings.EMAIL_HOST_USER,[user.email],fail_silently=False)
-
-    def verify(self,email,activate_key):
+    
+    
+    def verify(self, email, activate_key):
         try:
             user = User.objects.get(email=email)
             if user and user.activation_key == activate_key and not user.is_activation_key_expires():
