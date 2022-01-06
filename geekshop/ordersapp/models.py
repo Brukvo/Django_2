@@ -15,9 +15,9 @@ class Order(models.Model):
 
     ORDER_STATUS_CHOICES = (
         (PROCESSING, 'Обрабатывается'),
-        (SENT_TO_FORM, 'Формируется'),
+        (SENT_TO_FORM, 'Отправлен на сборку'),
         (SENT, 'Передан в службу доставки'),
-        (PAID, 'Оплачен'),
+        (PAID, 'Оплачен, ожидает отправки'),
         (READY, 'Доставлен'),
         (CANCELLED, 'Отменён'),
     )
@@ -41,6 +41,13 @@ class Order(models.Model):
 
     def get_items(self):
         pass
+
+    def delete(self, using=None, keep_parents=False):
+        for item in self.order_items.select_related('product'):
+            item.product.quantity += item.quantity
+            item.save()
+        self.is_active = False
+        self.save()
 
     
 class OrderItem(models.Model):

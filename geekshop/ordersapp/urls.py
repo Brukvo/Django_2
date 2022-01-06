@@ -1,6 +1,6 @@
 from django.urls import path
 
-from ordersapp.views import OrderListView, OrderCreateView, OrderDetailView, OrderDeleteView, order_forming_complete
+from ordersapp.views import OrderListView, OrderCreateView, OrderDetailView, OrderUpdateView, OrderDeleteView, order_forming_complete
 
 app_name = 'ordersapp'
 urlpatterns = [
